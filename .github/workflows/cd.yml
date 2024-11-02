@@ -1,5 +1,3 @@
-# CD GitHub Actions workflow for monolith
-
 name: CD
 
 on:
@@ -9,36 +7,81 @@ on:
 
 jobs:
 
+  linux_windows:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout the repository
+      uses: actions/checkout@v2
+
+    - name: Install Linux and Windows Cross Compilers
+      run: sudo apt-get install --yes --no-install-recommends musl-tools gcc-mingw-w64-x86-64-win32
+
+    - name: Build the executable
+      run: cargo build --release --target x86_64-unknown-linux-musl --target x86_64-pc-windows-gnu
+
+    - name: Rename binaries
+        run: mv target/x86_64-unknown-linux-musl/release/textpod target/x86_64-unknown-linux-musl/release/textpod-gnu-linux-x86_64
+
+    - name: Upload release binaries
+        uses: alexellis/upload-assets@0.4.0
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          asset_paths: '["./target/x86_64-unknown-linux-musl/release/textpod-gnu-linux-x86_64", "./target/x86_64-pc-windows-gnu/release/textpod.exe"]'
+
   macos:
     runs-on: macos-latest
     steps:
     - name: Checkout the repository
       uses: actions/checkout@v2
+
     - name: Build the executable
-      run: cargo build --release
-    
+      run: cargo build --release --target=x86_64-apple-darwin
+
+    - name: Rename binary
+        run: mv target/x86_64-apple-darwin/release/textpod target/x86_64-apple-darwin/release/textpod-macos-x86_64
+
     - name: Upload release binaries
-      uses: alexellis/upload-assets@0.4.0
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
-      with:
-        asset_paths: '["./target/release/textpod"]'
+        uses: alexellis/upload-assets@0.4.0
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          asset_paths: '["./target/x86_64-apple-darwin/release/textpod-macos-x86_64"]'
 
-
-  windows:
-    runs-on: windows-2019
+  macos_arm64:
+    runs-on: macos-latest
     steps:
-    - run: git config --global core.autocrlf false
-
     - name: Checkout the repository
       uses: actions/checkout@v2
 
     - name: Build the executable
-      run: cargo build --release
+      run: cargo build --release --target=aarch64-apple-darwin
+
+    - name: Rename binary
+        run: mv target/aarch64-apple-darwin/release/textpod target/aarch64-apple-darwin/release/textpod-macos-aarch64
 
     - name: Upload release binaries
-      uses: alexellis/upload-assets@0.4.0
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
-      with:
-        asset_paths: '["./target/release/textpod.exe"]'
+        uses: alexellis/upload-assets@0.4.0
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          asset_paths: '["./target/aarch64-apple-darwin/release/textpod-textpod-macos-aarch64"]'
+
+  # x86_64-unknown-linux-gnu:
+  #   runs-on: ubuntu-20.04
+  #   steps:
+  #   - name: Checkout the repository
+  #     uses: actions/checkout@v2
+
+  #   - name: Build the executable
+  #     run: cargo build --release --target=x86_64-unknown-linux-gnu
+
+  #   - name: Rename binary
+  #       run: mv target/x86_64-unknown-linux-gnu/release/textpod target/x86_64-unknown-linux-gnu/release/textpod-gnu-linux-x86_64
+
+  #   - name: Upload release binaries
+  #       uses: alexellis/upload-assets@0.4.0
+  #       env:
+  #         GITHUB_TOKEN: ${{ github.token }}
+  #       with:
+  #         asset_paths: '["./target/x86_64-unknown-linux-gnu/release/textpod-gnu-linux-x86_64"]'
