@@ -39,14 +39,14 @@ jobs:
       run: cargo build --release --target=x86_64-apple-darwin
 
     - name: Rename binary
-        run: mv target/x86_64-apple-darwin/release/textpod target/x86_64-apple-darwin/release/textpod-macos-x86_64
+      run: mv target/x86_64-apple-darwin/release/textpod target/x86_64-apple-darwin/release/textpod-macos-x86_64
 
     - name: Upload release binaries
-        uses: alexellis/upload-assets@0.4.0
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          asset_paths: '["./target/x86_64-apple-darwin/release/textpod-macos-x86_64"]'
+      uses: alexellis/upload-assets@0.4.0
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+        asset_paths: '["./target/x86_64-apple-darwin/release/textpod-macos-x86_64"]'
 
   macos_arm64:
     runs-on: macos-latest
