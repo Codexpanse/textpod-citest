@@ -1,29 +1,44 @@
-# .github/workflows/release.yml
+# CD GitHub Actions workflow for monolith
+
+name: CD
 
 on:
   release:
-    types: [created]
+    types:
+    - created
 
 jobs:
-  release:
-    name: release ${{ matrix.target }}
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - target: x86_64-pc-windows-gnu
-            archive: zip
-          - target: x86_64-unknown-linux-musl
-            archive: tar.gz tar.xz tar.zst
-          - target: x86_64-apple-darwin
-            archive: zip
+
+  macos:
+    runs-on: macos-latest
     steps:
-      - uses: actions/checkout@master
-      - name: Compile and release
-        uses: rust-build/rust-build.action@v1.4.5
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          RUSTTARGET: ${{ matrix.target }}
-          ARCHIVE_TYPES: ${{ matrix.archive }}
+    - name: Checkout the repository
+      uses: actions/checkout@v2
+    - name: Build the executable
+      run: cargo build --release
+    
+    - name: Upload release binaries
+      uses: alexellis/upload-assets@0.4.0
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+        asset_paths: '["./target/release/textpod"]'
+
+
+  windows:
+    runs-on: windows-2019
+    steps:
+    - run: git config --global core.autocrlf false
+
+    - name: Checkout the repository
+      uses: actions/checkout@v2
+
+    - name: Build the executable
+      run: cargo build --release
+
+    - name: Upload release binaries
+      uses: alexellis/upload-assets@0.4.0
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+        asset_paths: '["./target/release/textpod.exe"]'
