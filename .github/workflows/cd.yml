@@ -50,6 +50,11 @@ jobs:
     - name: Rename arm64 binary
       run: mv target/aarch64-apple-darwin/release/textpod target/aarch64-apple-darwin/release/textpod-macos-aarch64
 
+    - name: Make binaries executable
+      run: |
+        chmod +x target/x86_64-apple-darwin/release/textpod-macos-x86_64
+        chmod +x target/aarch64-apple-darwin/release/textpod-macos-aarch64
+
     - name: Upload release binaries
       uses: alexellis/upload-assets@0.4.0
       env:
