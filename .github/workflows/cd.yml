@@ -23,3 +23,22 @@ jobs:
         GITHUB_TOKEN: ${{ github.token }}
       with:
         asset_paths: '["./target/release/textpod"]'
+
+
+  windows:
+    runs-on: windows-2019
+    steps:
+    - run: git config --global core.autocrlf false
+
+    - name: Checkout the repository
+      uses: actions/checkout@v2
+
+    - name: Build the executable
+      run: cargo build --release
+
+    - name: Upload release binaries
+      uses: alexellis/upload-assets@0.4.0
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+        asset_paths: '["target\release\textpod.exe"]'
