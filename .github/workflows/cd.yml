@@ -33,7 +33,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ github.token }}
       with:
-        asset_paths: '["textpod-gnu-linux-x86_64.tar.gz", " textpod-windows"]'
+        asset_paths: '["textpod-gnu-linux-x86_64.tar.gz", "textpod-windows"]'
 
   macos:
     runs-on: macos-latest
