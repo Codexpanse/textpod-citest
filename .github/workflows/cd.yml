@@ -63,4 +63,4 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ github.token }}
       with:
-        asset_paths: '["textpod-macos-x86_64.zip", "textpod-macos-aarch64.zip", "textpod-macos-x86_64.zip.sha256", "textpod-macos-aarch64.zip.sha256"]'
+        asset_paths: '["textpod-macos-x86_64.tar.gz", "textpod-macos-aarch64.tar.gz", "textpod-macos-x86_64.zip.sha256", "textpod-macos-aarch64.zip.sha256"]'
