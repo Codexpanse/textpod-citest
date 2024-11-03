@@ -44,23 +44,18 @@ jobs:
     - name: Build the executable
       run: cargo build --release --target=x86_64-apple-darwin --target=aarch64-apple-darwin
 
-    - name: Rename x89 binary
-      run: mv target/x86_64-apple-darwin/release/textpod target/x86_64-apple-darwin/release/textpod-macos-x86_64
+    - name: Zip x86_64 binary
+      run: zip -j textpod-macos-x86_64.zip target/x86_64-apple-darwin/release/textpod
 
-    - name: Rename arm64 binary
-      run: mv target/aarch64-apple-darwin/release/textpod target/aarch64-apple-darwin/release/textpod-macos-aarch64
-
-    - name: Make binaries executable
-      run: |
-        chmod +x target/x86_64-apple-darwin/release/textpod-macos-x86_64
-        chmod +x target/aarch64-apple-darwin/release/textpod-macos-aarch64
+    - name: Zip arm64 binary
+      run: zip -j textpod-macos-aarch64.zip target/aarch64-apple-darwin/release/textpod
 
     - name: Upload release binaries
       uses: alexellis/upload-assets@0.4.0
       env:
         GITHUB_TOKEN: ${{ github.token }}
       with:
-        asset_paths: '["./target/x86_64-apple-darwin/release/textpod-macos-x86_64", "./target/aarch64-apple-darwin/release/textpod-macos-aarch64"]'
+        asset_paths: '["textpod-macos-x86_64.zip", "textpod-macos-aarch64.zip"]'
 
   # x86_64-unknown-linux-gnu:
   #   runs-on: ubuntu-20.04
